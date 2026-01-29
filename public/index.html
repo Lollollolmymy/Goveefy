@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Govee Album Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>Govee Album Dashboard</h1>
+      <span class="status" id="ws-status">WS: Disconnected</span>
+    </header>
+
+    <main>
+      <section class="panel now-playing">
+        <h2>Now Playing</h2>
+        <div class="now-playing-content">
+          <div class="art-wrapper">
+            <img id="album-art" src="" alt="Album Art" />
+          </div>
+          <div class="track-info">
+            <div id="track-name" class="track-name">No track</div>
+            <div id="track-artist" class="track-artist"></div>
+            <div id="album-id" class="album-id"></div>
+            <div class="color-preview">
+              <div>
+                <span>Current Color:</span>
+                <div id="color-box" class="color-box"></div>
+                <span id="color-text"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel album-settings">
+        <h2>Album Settings</h2>
+        <div class="form-group">
+          <label for="saturationBoost">Saturation Boost (album):</label>
+          <input type="range" id="saturationBoost" min="0.5" max="3.0" step="0.1" value="1.0" />
+          <span id="saturationBoostValue">1.0</span>
+        </div>
+
+        <div class="form-group">
+          <label for="hueShift">Hue Shift (degrees):</label>
+          <input type="range" id="hueShift" min="-180" max="180" step="1" value="0" />
+          <span id="hueShiftValue">0°</span>
+        </div>
+
+        <div class="form-group">
+          <label for="brightnessFactor">Brightness Factor:</label>
+          <input type="range" id="brightnessFactor" min="0.3" max="1.5" step="0.05" value="1.0" />
+          <span id="brightnessFactorValue">1.0</span>
+        </div>
+
+        <button id="saveAlbumSettings">Save Album Settings</button>
+      </section>
+
+      <section class="panel global-settings">
+        <h2>Global Settings</h2>
+        <div class="toggle">
+          <input type="checkbox" id="saturationBoostEnabled" checked />
+          <label for="saturationBoostEnabled">Enable Global Saturation Boost</label>
+        </div>
+        <div class="toggle">
+          <input type="checkbox" id="transitionsEnabled" />
+          <label for="transitionsEnabled">Enable Transitions (placeholder toggle)</label>
+        </div>
+        <div class="toggle">
+          <input type="checkbox" id="genreModeEnabled" />
+          <label for="genreModeEnabled">Enable Genre Mode (placeholder toggle)</label>
+        </div>
+        <button id="saveGlobalSettings">Save Global Settings</button>
+      </section>
+
+      <section class="panel logs">
+        <h2>Logs</h2>
+        <div id="logs" class="log-output"></div>
+        <div class="log-actions">
+          <button id="refreshLogs">Refresh Logs</button>
+          <button id="restartBackend">Restart Backend</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
