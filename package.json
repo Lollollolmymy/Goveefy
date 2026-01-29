@@ -1,0 +1,22 @@
+{
+  "name": "extensions",
+  "version": "1.0.0",
+  "description": "Spotify → Govee H601F Color Sync Backend",
+  "main": "govee-backend.js",
+  "scripts": {
+    "start": "node govee-backend.js",
+    "dev": "node govee-backend.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "colorthief": "^2.6.0",
+    "express": "^5.2.1",
+    "node-fetch": "^2.7.0",
+    "node-vibrant": "^4.0.3",
+    "ws": "^8.18.3"
+  }
+}
