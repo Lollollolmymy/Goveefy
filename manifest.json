@@ -1,0 +1,14 @@
+{
+    "name": "Goveefy",
+    "description": "Sync your Govee lights to your Spotify album art colors in real-time.",
+    "preview": "preview.png",
+    "main": "goveefy.js",
+    "readme": "README.md",
+    "authors": [
+        {
+            "name": "Lollollolmymy",
+            "url": "https://github.com/Lollollolmymy"
+        }
+    ],
+    "tags": ["lights", "govee", "sync", "ambiance"]
+}
