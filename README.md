@@ -10,20 +10,20 @@ Goveefy is a [Spicetify](https://spicetify.app) extension that reads the dominan
 
 - 🎨 Extracts the most vibrant color from album art using K-means clustering
 - 💡 Supports multiple Govee lights — toggle each one on or off individually
+- 🎛️ Segment mode toggle — works with both regular lights and segment-capable devices
 - ⚙️ Fully configurable from inside Spotify's own Settings page — no config files to edit
 - 💾 Settings persist across Spotify restarts
-- 🎛️ Control how many segments each light uses
 - ⚡ Throttle and threshold controls to tune how often lights update
 
 ---
 
 ## Supported Devices
 
-Any Govee device that supports the `segmentedColorRgb` capability via the Govee Open API. Tested on:
+Any Govee device supported by the Govee Open API. Tested on:
 
-- **H601F** (Govee Downlight)
+- **H601F** (Govee Downlight) — with segments enabled
 
-Other segment-capable Govee devices should work — just enter the correct SKU in settings.
+Other Govee devices should work too — just enter the correct SKU and toggle segments off if your device doesn't support them.
 
 ---
 
@@ -62,9 +62,10 @@ Search for **Goveefy** in the Spicetify Marketplace and click Install.
 3. Scroll to the very bottom — you'll see the **Goveefy** section
 4. Paste in your **Govee API key**
 5. Set how many **segments** your light uses
-6. Add your lights — each one needs a **name**, **MAC address**, and **SKU**
-7. Toggle individual lights on or off with the **Status** switch
-8. Hit **Save**
+6. Toggle **Enable light segments** on if your device supports segments
+7. Add your lights — each one needs a **name**, **MAC address**, and **SKU**
+8. Toggle individual lights on or off with the **Status** switch
+9. Hit **Save**
 
 That's it. Play a song and your lights will follow.
 
@@ -91,7 +92,8 @@ That's it. Play a song and your lights will follow.
 |---|---|
 | Govee API Key | Your personal key from the Govee Developer portal |
 | Light segments | How many segments each light has |
-| Lights | Add, remove, rename, and toggle your lights |
+| Enable light segments | Turn on for segment-capable devices like LED strips |
+| Lights | Add, remove, rename, and toggle your lights individually |
 | Update throttle | Minimum ms between API calls on track change |
 | Color change threshold | How different a new color must be (0–255) to trigger an update |
 
@@ -99,4 +101,5 @@ That's it. Play a song and your lights will follow.
 
 ## License
 
-MIT
+MIT — credit must be given to the original author.
+

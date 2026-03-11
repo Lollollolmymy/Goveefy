@@ -1,24 +1,17 @@
-// ═══════════════════════════════════════════════════════════════════════════════
-// GOVEEFY
-// ═══════════════════════════════════════════════════════════════════════════════
-//
-// HOW TO CONFIGURE:
-//   Spotify → Profile avatar → Settings → scroll to bottom → "Govee Sync"
-//
-// ═══════════════════════════════════════════════════════════════════════════════
+// goveefy.js
+// i dead ass made this cos lit none had bruh
 
 (function () {
     'use strict';
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // SETTINGS  (persisted in Spicetify.LocalStorage)
-    // ═══════════════════════════════════════════════════════════════════════════
+    // settings storage
 
     const STORAGE_KEY = "goveefy_v1";
 
     const DEFAULT_SETTINGS = {
         goveeApiKey:    "",
         segmentCount:   1,
+        enableSegments: false,
         devices:        [{ name: "", device: "", sku: "", enabled: true }],
         updateThrottle: 800,
         colorThreshold: 25,
@@ -49,9 +42,7 @@
         return CFG.devices.filter(d => d.enabled && d.device.trim());
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // SETTINGS PAGE INJECTION
-    // ═══════════════════════════════════════════════════════════════════════════
+    // settings inject 
 
     const SECTION_ID = "goveefy-section";
 
@@ -181,7 +172,7 @@
     }
 
     function buildSection() {
-        // Local draft — only applied to CFG when user clicks Save
+        // dont save anything yet (might add auto saving if i feel like it)
         let draft = { ...CFG, devices: CFG.devices.map(d => ({ ...d })) };
 
         const root = document.createElement("div");
@@ -192,7 +183,7 @@
             <div class="gs-desc">Sync your Govee lights to Spotify album art colors in real-time.</div>
         `;
 
-        // ── Helper: labeled row ──
+        // settings
         function row(labelText, hint, ctrl) {
             const r = document.createElement("div");
             r.className = "gs-row";
@@ -230,19 +221,25 @@
             return label;
         }
 
-        // ── API Key ──
+        // api key
         row("Govee API Key",
             "Get yours from the Govee Developer portal",
             textInput(draft.goveeApiKey, "Paste your API key here", v => draft.goveeApiKey = v.trim())
         );
 
-        // ── Segment Count ──
+        // segment count + toggle
         row("Light segments",
             "Controls how many segments each light uses",
             numInput(draft.segmentCount, 1, 15, v => draft.segmentCount = Math.max(1, v))
         );
 
-        // ── Devices ──
+        // segment toggle
+        row("Enable light segments",
+            "Turn on if your device supports segments (e.g., LED strips)",
+            makeToggle(draft.enableSegments, v => draft.enableSegments = v)
+        );
+
+        // device list
         const devSection = document.createElement("div");
         devSection.className = "gs-row";
         devSection.style.cssText = "flex-direction:column; align-items:flex-start; padding-bottom:20px;";
@@ -330,7 +327,7 @@
         renderDevices();
         root.appendChild(devSection);
 
-        // ── Advanced ──
+        // advanced
         row("Update throttle (ms)",
             "Minimum time between API calls when tracks change",
             numInput(draft.updateThrottle, 100, 10000, v => draft.updateThrottle = Math.max(100, v))
@@ -341,7 +338,7 @@
             numInput(draft.colorThreshold, 1, 255, v => draft.colorThreshold = Math.min(255, Math.max(1, v)))
         );
 
-        // ── Save ──
+        // hold my shi rlq
         const actions = document.createElement("div");
         actions.className = "gs-actions";
 
@@ -400,9 +397,7 @@
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // INITIALIZATION & DEPENDENCY LOADING
-    // ═══════════════════════════════════════════════════════════════════════════
+    // wait for it (hamilton refference)
 
     function waitForSpicetify() {
         return new Promise(resolve => {
@@ -425,9 +420,7 @@
         });
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // COLOR SCIENCE ENGINE
-    // ═══════════════════════════════════════════════════════════════════════════
+    // very complicated color machine 
 
     const COLOR_CONFIG = {
         paletteSize: 6,
@@ -510,9 +503,7 @@
         return Math.abs(a.r-b.r)>t || Math.abs(a.g-b.g)>t || Math.abs(a.b-b.b)>t;
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // ALBUM ART
-    // ═══════════════════════════════════════════════════════════════════════════
+    // gimmi the color from the url bro
 
     function getAlbumArtUrl(pd) {
         const item=pd?.item; if(!item) return null;
@@ -532,14 +523,12 @@
         } catch(e) { return {r:120,g:120,b:120}; }
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // GOVEE API
-    // ═══════════════════════════════════════════════════════════════════════════
+    // send ts to the api 
 
     async function setLights(r,g,b) {
         const devices = getEnabledDevices();
         if (!devices.length) return;
-        const segments=getSegments(), hex=(r<<16)|(g<<8)|b;
+        const hex=(r<<16)|(g<<8)|b;
         console.log(`[Goveefy] 🎨 RGB(${r},${g},${b}) → ${devices.length} light(s)`);
         await Promise.all(devices.map(dev =>
             fetch("https://openapi.api.govee.com/router/api/v1/device/control", {
@@ -548,11 +537,15 @@
                 body: JSON.stringify({
                     requestId: `req_${Date.now()}_${Math.random()}`,
                     payload: {
-                        sku: dev.sku, device: dev.device,
+                        sku: dev.sku,
+                        device: dev.device,
                         capability: {
-                            type: "devices.capabilities.segment_color_setting",
-                            instance: "segmentedColorRgb",
-                            value: { segment: segments, rgb: hex }
+                            type: "devices.capabilities." + (CFG.enableSegments ?
+                                "segment_color_setting" : "color_setting"),
+                            instance: CFG.enableSegments ? "segmentedColorRgb" : "colorRgb",
+                            value: CFG.enableSegments ?
+                                { segment: getSegments(), rgb: hex } :
+                                { color: { r, g, b } }
                         }
                     }
                 })
@@ -563,9 +556,7 @@
         ));
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // MAIN SYNC LOOP
-    // ═══════════════════════════════════════════════════════════════════════════
+    // track my shi bro 
 
     async function handleTrackChange() {
         const data=Spicetify.Player.data, item=data?.item;
@@ -587,9 +578,7 @@
         lastColor=color; lastUpdateTime=Date.now();
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════
-    // INIT
-    // ═══════════════════════════════════════════════════════════════════════════
+    // run
 
     async function init() {
         await waitForSpicetify();
@@ -604,7 +593,7 @@
             Spicetify.Player.addEventListener("songchange", handleTrackChange);
         }
 
-        console.log("[Goveefy] 🚀 Running — Spotify → Settings → scroll down to configure");
+        console.log("[Goveefy]  Running — Spotify → Settings → scroll down to configure");
     }
 
     init().catch(e => console.error("[Goveefy] ❌", e));
