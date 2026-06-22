@@ -545,7 +545,7 @@
                             instance: CFG.enableSegments ? "segmentedColorRgb" : "colorRgb",
                             value: CFG.enableSegments ?
                                 { segment: getSegments(), rgb: hex } :
-                                { color: { r, g, b } }
+                                hex
                         }
                     }
                 })
